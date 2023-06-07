@@ -503,54 +503,64 @@ std::istream& operator>>(std::istream& is, Polynomial& poly) {
 }
 
 void processFile(const std::string& filename) {
-    std::ifstream fin;
-    fin.open(filename);
+    std::ifstream file;
+    file.open(filename);
     std::string str;
     size_t pos1, pos2;
+    if (!file.is_open()) {
+        std::cout << "File opening error\n";
 
-    while (!fin.eof()) {
-        str = "";
-        std::getline(fin, str);
-        if (str.length() == 0) {
-            break;
-        }
-        size_t end = str.find_first_of(";");
-        str.replace(end, 1, "");
-        str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
-
-        Polynomial result;
-        char operation;
-        pos1 = 0;
-        pos2 = str.find_first_of(">");
-        std::string a = str.substr(pos1, pos2 - pos1 + 1);
-        Polynomial p1(a);
-        pos1 = str.find_first_of("<", pos1 + 1);
-        operation = str[pos2 + 1];
-
-        std::string b = str.substr(pos1, end - pos1);
-        Polynomial p2(b);
-        switch (operation) {
-        case '+':
-            result = p1 + p2;
-            break;
-        case '-':
-            result = p1 - p2;
-            break;
-        case '*':
-            result = p1 * p2;
-            break;
-        case '=':
-            std::cout << (p1 == p2 ? "true" : "false") << std::endl;
-            continue;
-        case '!':
-            std::cout << (p1 != p2 ? "true" : "false") << std::endl;
-            continue;
-        default:
-            std::cout << "Invalid operation: " << operation << std::endl;
-            continue;
-        }
-        std::cout << result << std::endl;
     }
+    else if (file.peek() == EOF) {
+        std::cout << "File empty\n";
+    }
+    else {
+        while (!file.eof()) {
+            str = "";
+            std::getline(file, str);
+            if (str.length() == 0) {
+                std::cout << "\n";
+                continue;
+            }
+            size_t end = str.find_first_of(";");
+            str.replace(end, 1, "");
+            str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+
+            Polynomial result;
+            char operation;
+            pos1 = 0;
+            pos2 = str.find_first_of(">");
+            std::string a = str.substr(pos1, pos2 - pos1 + 1);
+            Polynomial p1(a);
+            pos1 = str.find_first_of("<", pos1 + 1);
+            operation = str[pos2 + 1];
+
+            std::string b = str.substr(pos1, end - pos1);
+            Polynomial p2(b);
+            switch (operation) {
+            case '+':
+                result = p1 + p2;
+                break;
+            case '-':
+                result = p1 - p2;
+                break;
+            case '*':
+                result = p1 * p2;
+                break;
+            case '=':
+                std::cout << (p1 == p2 ? "true" : "false") << std::endl;
+                continue;
+            case '!':
+                std::cout << (p1 != p2 ? "true" : "false") << std::endl;
+                continue;
+            default:
+                std::cout << "Invalid operation: " << operation << std::endl;
+                continue;
+            }
+            std::cout << result << std::endl;
+        }
+    }
+
 }
 
 
@@ -558,6 +568,6 @@ int main() {
 
     processFile("e.txt");
 
-}
 
+}
 
